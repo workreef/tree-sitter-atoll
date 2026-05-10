@@ -188,13 +188,18 @@
 ((identifier_expression (identifier) @keyword)
  (#match? @keyword "^self$"))
 
-; Heuristic: an identifier-expression whose name starts with an
-; uppercase letter is most likely a variant constructor or type
-; reference (Atoll convention).
+; Heuristic: an identifier whose name starts with an uppercase
+; letter is most likely a variant constructor or type reference
+; (Atoll convention). Applies to expression position AND to bare
+; pattern position (e.g. `None` in `match self { None => ..., Some(_) => ... }`,
+; which parses as a binding_pattern because it has no payload parens).
 ((identifier_expression (identifier) @variant)
  (#match? @variant "^[A-Z]"))
 
-; Variant patterns
+((binding_pattern (identifier) @variant)
+ (#match? @variant "^[A-Z]"))
+
+; Variant patterns (with payload parens, e.g. `Some(x)`)
 (variant_pattern type: (named_type (type_identifier) @variant))
 
 ; ─── Loop labels ──────────────────────────────────────────────────
