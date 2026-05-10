@@ -1,0 +1,127 @@
+==================
+Bindings: := and typed
+==================
+
+fn f(): int {
+    x := 5
+    mut y := 10
+    z: int = 7
+    return x + y + z
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    return_type: (named_type (type_identifier))
+    body: (block
+      (binding_statement
+        pattern: (binding_pattern (identifier))
+        value: (integer_literal))
+      (binding_statement
+        pattern: (binding_pattern (identifier))
+        value: (integer_literal))
+      (binding_statement
+        name: (identifier)
+        type: (named_type (type_identifier))
+        value: (integer_literal))
+      (return_statement
+        value: (binary_expression
+          left: (binary_expression
+            left: (identifier_expression (identifier))
+            right: (identifier_expression (identifier)))
+          right: (identifier_expression (identifier)))))))
+
+==================
+Match expression
+==================
+
+fn isSome(self): bool {
+    return match self {
+        None => false,
+        Some(_) => true,
+    }
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list (parameter))
+    return_type: (named_type (type_identifier))
+    body: (block
+      (return_statement
+        value: (match_expression
+          scrutinee: (identifier_expression (identifier))
+          (match_arm
+            pattern: (binding_pattern (identifier))
+            body: (boolean_literal))
+          (match_arm
+            pattern: (variant_pattern
+              type: (named_type (type_identifier))
+              (wildcard_pattern))
+            body: (boolean_literal)))))))
+
+==================
+Decorator with arguments
+==================
+
+@host("foo", "bar")
+fn external(): int
+
+---
+
+(source_file
+  (function_declaration
+    (decorator
+      name: (decorator_path (identifier))
+      arguments: (argument_list
+        (string_literal (string_content))
+        (string_literal (string_content))))
+    name: (identifier)
+    parameters: (parameter_list)
+    return_type: (named_type (type_identifier))))
+
+==================
+String with interpolation
+==================
+
+const S = "hello $name and ${user.first}!"
+
+---
+
+(source_file
+  (const_declaration
+    name: (identifier)
+    value: (string_literal
+      (string_content)
+      (string_interpolation_ident)
+      (string_content)
+      (string_interpolation)
+      (string_content))))
+
+==================
+Call with generics
+==================
+
+fn f(): int {
+    return intrinsics.sizeOf[int]()
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    return_type: (named_type (type_identifier))
+    body: (block
+      (return_statement
+        value: (method_call_expression
+          receiver: (identifier_expression (identifier))
+          method: (identifier)
+          type_arguments: (generic_arguments (named_type (type_identifier)))
+          arguments: (argument_list))))))

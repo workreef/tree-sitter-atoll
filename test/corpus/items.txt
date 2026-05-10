@@ -1,0 +1,154 @@
+==================
+Function declaration
+==================
+
+fn add(a: int, b: int): int {
+    return a + b
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (named_type (type_identifier)))
+      (parameter
+        name: (identifier)
+        type: (named_type (type_identifier))))
+    return_type: (named_type (type_identifier))
+    body: (block
+      (return_statement
+        value: (binary_expression
+          left: (identifier_expression (identifier))
+          right: (identifier_expression (identifier)))))))
+
+==================
+Generic function
+==================
+
+fn map[T, R](f: fn(T) -> R, x: T): R => f(x)
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    type_parameters: (generic_parameters
+      (generic_parameter name: (type_identifier))
+      (generic_parameter name: (type_identifier)))
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (function_type
+          (named_type (type_identifier))
+          (named_type (type_identifier))))
+      (parameter
+        name: (identifier)
+        type: (named_type (type_identifier))))
+    return_type: (named_type (type_identifier))
+    body: (call_expression
+      function: (identifier_expression (identifier))
+      arguments: (argument_list (identifier_expression (identifier))))))
+
+==================
+Struct with decorators
+==================
+
+@builtin @niche
+struct Point {
+    x: int
+    y: int
+}
+
+---
+
+(source_file
+  (struct_declaration
+    (decorator name: (decorator_path (identifier)))
+    (decorator name: (decorator_path (identifier)))
+    name: (type_identifier)
+    body: (struct_body
+      (field_declaration
+        name: (identifier)
+        type: (named_type (type_identifier)))
+      (field_declaration
+        name: (identifier)
+        type: (named_type (type_identifier))))))
+
+==================
+Generic enum with variants
+==================
+
+enum Option[T] {
+    Some(T)
+    None
+}
+
+---
+
+(source_file
+  (enum_declaration
+    name: (type_identifier)
+    type_parameters: (generic_parameters
+      (generic_parameter name: (type_identifier)))
+    body: (enum_body
+      (enum_variant
+        name: (type_identifier)
+        (enum_variant_tuple
+          (named_type (type_identifier))))
+      (enum_variant name: (type_identifier)))))
+
+==================
+Trait declaration
+==================
+
+trait Hashable: Equatable {
+    fn hashCode(self): int
+}
+
+---
+
+(source_file
+  (trait_declaration
+    name: (type_identifier)
+    super_traits: (named_type (type_identifier))
+    body: (trait_body
+      (function_declaration
+        name: (identifier)
+        parameters: (parameter_list (parameter))
+        return_type: (named_type (type_identifier))))))
+
+==================
+Distinct type alias
+==================
+
+distinct type UserId = int
+
+---
+
+(source_file
+  (distinct_type
+    name: (type_identifier)
+    value: (named_type (type_identifier))))
+
+==================
+Module and import
+==================
+
+module foo.bar
+import { add, sub } from "math"
+import "io" as IO
+
+---
+
+(source_file
+  (module_declaration path: (module_path (identifier) (identifier)))
+  (import_declaration
+    items: (import_items (identifier) (identifier))
+    source: (string_literal (string_content)))
+  (import_declaration
+    source: (string_literal (string_content))
+    alias: (identifier)))

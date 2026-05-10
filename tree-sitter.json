@@ -1,0 +1,31 @@
+{
+  "grammars": [
+    {
+      "name": "atoll",
+      "camelcase": "Atoll",
+      "title": "Atoll",
+      "scope": "source.atoll",
+      "path": ".",
+      "file-types": ["at"],
+      "highlights": ["queries/highlights.scm"],
+      "injection-regex": "atoll"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "Apache-2.0",
+    "description": "Atoll language grammar",
+    "authors": [
+      { "name": "Workreef" }
+    ]
+  },
+  "bindings": {
+    "c": false,
+    "go": false,
+    "node": false,
+    "python": false,
+    "rust": false,
+    "swift": false,
+    "zig": false
+  }
+}
