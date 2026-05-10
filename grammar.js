@@ -67,6 +67,8 @@ module.exports = grammar({
     [$.struct_literal_shorthand, $.struct_pattern_field],
     [$.struct_literal_field, $.struct_pattern_field],
     [$.parameter, $.named_type, $.identifier_expression],
+    [$.parameter, $.named_type],
+    [$.field_declaration, $.named_type],
   ],
 
   supertypes: $ => [
@@ -175,7 +177,7 @@ module.exports = grammar({
 
     // ── Function ─────────────────────────────────────────────────
 
-    function_declaration: $ => seq(
+    function_declaration: $ => prec.right(seq(
       repeat($.decorator),
       optional($.visibility_modifier),
       optional($.unsafe_modifier),
@@ -183,7 +185,12 @@ module.exports = grammar({
       field('name', $.identifier),
       optional(field('type_parameters', $.generic_parameters)),
       field('parameters', $.parameter_list),
-      optional(seq(':', field('return_type', $._type))),
+      optional(choice(
+        seq(':', field('return_type', $._type)),
+        // colonless return type: prefer when present to avoid greedy
+        // consumption of the next item's `fn`/identifier.
+        prec.dynamic(1, field('return_type', $._type)),
+      )),
       optional(field('using_clause', $.using_clause)),
       optional(field('where_clause', $.where_clause)),
       choice(
@@ -191,7 +198,7 @@ module.exports = grammar({
         seq('=>', field('body', $._expression), optional(';')),
         optional(';'),               // bodyless fn (intrinsic / trait stub)
       ),
-    ),
+    )),
 
     parameter_list: $ => seq(
       '(',
@@ -205,11 +212,11 @@ module.exports = grammar({
     parameter: $ => choice(
       // self / mut self
       seq(optional('mut'), 'self'),
-      // name (: type)? (= default)?
+      // name (: type)? (= default)?  — colon is optional
       seq(
         optional('mut'),
         field('name', $.identifier),
-        optional(seq(':', field('type', $._type))),
+        optional(seq(optional(':'), field('type', $._type))),
         optional(seq('=', field('default', $._expression))),
       ),
     ),
@@ -260,7 +267,7 @@ module.exports = grammar({
       repeat($.decorator),
       optional($.visibility_modifier),
       field('name', $.identifier),
-      ':',
+      optional(':'),
       field('type', $._type),
       optional(seq('=', field('default', $._expression))),
     )),

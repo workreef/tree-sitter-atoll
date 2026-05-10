@@ -1,0 +1,63 @@
+==================
+Colonless function: params, return, fields
+==================
+
+struct Point {
+    x int
+    y int
+}
+
+fn add(a int, b int) int {
+    return a + b
+}
+
+---
+
+(source_file
+  (struct_declaration
+    name: (type_identifier)
+    body: (struct_body
+      (field_declaration
+        name: (identifier)
+        type: (named_type (type_identifier)))
+      (field_declaration
+        name: (identifier)
+        type: (named_type (type_identifier)))))
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (named_type (type_identifier)))
+      (parameter
+        name: (identifier)
+        type: (named_type (type_identifier))))
+    return_type: (named_type (type_identifier))
+    body: (block
+      (return_statement
+        value: (binary_expression
+          left: (identifier_expression (identifier))
+          right: (identifier_expression (identifier)))))))
+
+==================
+Mixed colon and colonless
+==================
+
+fn f(a: int, b int) bool => a == b
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (named_type (type_identifier)))
+      (parameter
+        name: (identifier)
+        type: (named_type (type_identifier))))
+    return_type: (named_type (type_identifier))
+    body: (binary_expression
+      left: (identifier_expression (identifier))
+      right: (identifier_expression (identifier)))))
