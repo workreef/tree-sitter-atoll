@@ -75,7 +75,7 @@
   "is"
 ] @keyword.operator
 
-"self" @variable.builtin
+"self" @keyword
 
 ; ─── Operators ────────────────────────────────────────────────────
 
@@ -185,8 +185,8 @@
 
 ; ─── Self / variant constructors ──────────────────────────────────
 
-((identifier_expression (identifier) @variable.builtin)
- (#match? @variable.builtin "^self$"))
+((identifier_expression (identifier) @keyword)
+ (#match? @keyword "^self$"))
 
 ; Heuristic: an identifier-expression whose name starts with an
 ; uppercase letter is most likely a variant constructor or type
